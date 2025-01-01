@@ -15,17 +15,14 @@ def with_set(mask, i):
   return mask | (1 << i)
 
 def best_configuration(items, weight):
-  reverse_sorted = sorted(items, reverse=True)
-  sums = [sum(reverse_sorted[:(i+1)]) for i in range(len(items))]
+  items = sorted(items, reverse=True)
+  sums = [sum(items[:(i+1)]) for i in range(len(items))]
   
   q = [(remaining_estimate(sums, weight), 0, 1, 0, 0)]
   while len(q) > 0:
-    (h, cnt, entanglement, taken_mask, total) = heappop(q)
+    (_, cnt, entanglement, taken_mask, total) = heappop(q)
     if total == weight:
       return (cnt, entanglement, [items[i] for i in range(len(items)) if is_set(taken_mask, i)])
-    
-    if len(q) > 10_000_000:
-      q = q[:1_000_000]
     
     remaining = weight - total
     for i in range(len(items)):
